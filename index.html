@@ -86,16 +86,15 @@
    *  3) Enable Firestore (native mode)
    *  4) Replace FIREBASE_CONFIG below with your project config (apiKey etc.)
    *****************************************************************/
-  const FIREBASE_CONFIG = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT.appspot.com",
-    messagingSenderId: "SENDER_ID",
-    appId: "APP_ID",
-    measurementId: "G-MEASUREMENT_ID"
-  };
-
+  const firebaseConfig = {
+  apiKey: "AIzaSyCxg2h3W6NLnaFurqtfN31IJjGQCGs7eDo",
+  authDomain: "team-abh-pk-admin.firebaseapp.com",
+  projectId: "team-abh-pk-admin",
+  storageBucket: "team-abh-pk-admin.firebasestorage.app",
+  messagingSenderId: "1034877264224",
+  appId: "1:1034877264224:web:eb1b0baacd999b296fbe05",
+  measurementId: "G-KQM0JND3Z8"
+};
   // Initialize Firebase
   firebase.initializeApp(FIREBASE_CONFIG);
   const auth = firebase.auth();
