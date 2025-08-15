@@ -2,915 +2,379 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pro Software Company Manager</title>
-  <!-- Tailwind via CDN -->
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pro Software Company Manager — Firebase Edition</title>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config = { theme: { extend: { borderRadius: { '2xl': '1.25rem' } } } };</script>
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Ef2m3w5XfG5lY5t6fQwrQm1QyX1wVY0b8t4x3y5rj3o5h1z+4h3yW8Zk7rBxN7X2JXlZ7QqM8u3+6FJ3xGmG0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
   <style>
-    /* Simple scrollbar */
-    ::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:999px}::-webkit-scrollbar-thumb:hover{background:#9ca3af}
-    .card{ @apply bg-white border rounded-2xl shadow-sm; }
-    .btn{ @apply inline-flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium bg-slate-900 text-white hover:bg-black disabled:opacity-50; }
-    .btn-ghost{ @apply bg-slate-100 text-slate-900 hover:bg-slate-200; }
-    .pill{ @apply text-xs px-2 py-0.5 rounded-full; }
-    .pill-green{ @apply bg-emerald-100 text-emerald-700; }
-    .pill-amber{ @apply bg-amber-100 text-amber-700; }
-    .pill-red{ @apply bg-rose-100 text-rose-700; }
-    .label{ @apply text-sm font-medium text-slate-700 mb-1; }
-    .input{ @apply w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring; }
-    .textarea{ @apply w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring; }
-    .select{ @apply w-full border rounded-xl px-3 py-2 focus:outline-none focus:ring; }
-    .grid-auto{ display:grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap:1rem; }
-    .link{ @apply text-sky-700 hover:underline; }
+    /* small tweaks */
+    body{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial}
+    .card{background:white;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,.06);border:1px solid rgba(2,6,23,.04)}
+    .btn{display:inline-flex;gap:.5rem;align-items:center;padding:.5rem .75rem;border-radius:10px;background:#0f172a;color:#fff;font-weight:600}
+    .btn-ghost{background:#f8fafc;color:#0f172a;padding:.45rem .7rem;border-radius:10px;border:1px solid #e6eef8}
+    .input,.select,.textarea{width:100%;padding:.5rem .6rem;border-radius:8px;border:1px solid #e6eef8;background:#fff}
+    .small{font-size:.85rem;color:#64748b}
+    .pill{font-size:.75rem;padding:.2rem .5rem;border-radius:999px}
+    .kanban-col{min-height:120px}
+    @media (max-width:768px){ .md-hide{display:none} }
   </style>
 </head>
-<body class="bg-slate-100 text-slate-900">
+<body class="bg-slate-100 min-h-screen">
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b">
+  <!-- HEADER -->
+  <header class="bg-white border-b sticky top-0 z-40">
     <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <button id="toggleSidebar" class="md:hidden p-2 rounded-lg border"><i class="fa-solid fa-bars"></i></button>
-        <div class="font-bold text-xl" id="brandName">Team ABH PK Software</div>
+      <div class="flex items-center gap-4">
+        <button id="menuToggle" class="md-hide p-2 rounded border"><i class="fa-solid fa-bars"></i></button>
+        <div>
+          <div id="brand" class="font-bold text-xl">Pro Software Company Manager</div>
+          <div id="brandSub" class="small">Connect team • Manage tasks • Payroll & invoices</div>
+        </div>
       </div>
-      <div class="hidden md:flex items-center gap-2 text-sm text-slate-600" id="brandMeta">info@teamabhpk.me • +92 300 0000000</div>
+
+      <div class="flex items-center gap-3">
+        <div id="userArea" class="hidden items-center gap-3">
+          <div id="userName" class="small"></div>
+          <button id="logoutBtn" class="btn-ghost"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+        <div id="authArea" class="flex items-center gap-2">
+          <button id="loginBtn" class="btn-ghost"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+          <button id="signupBtn" class="btn-ghost"><i class="fa-regular fa-user"></i> Sign up</button>
+        </div>
+      </div>
     </div>
   </header>
 
-  <!-- Layout -->
-  <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[240px,1fr] gap-4">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="card h-max p-2 hidden md:block">
-      <nav id="nav" class="space-y-1">
-        <!-- Filled by JS -->
+  <div class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-[260px,1fr] gap-4">
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="card p-3 hidden md:block">
+      <nav class="space-y-2" id="nav">
+        <!-- items inserted by JS -->
       </nav>
+      <div class="mt-4 text-xs small">
+        <div id="companyQuick">No company configured — Settings → Company info</div>
+      </div>
     </aside>
 
-    <!-- Main -->
-    <main id="main">
-      <!-- Sections injected by JS -->
+    <!-- MAIN -->
+    <main id="main" class="">
+      <!-- content injected by JS -->
+      <div class="card p-6">
+        <h3 class="text-lg font-semibold">Loading app…</h3>
+        <p class="small">If you just opened the app, please login and configure Firebase config inside the file.</p>
+      </div>
     </main>
   </div>
 
-  <footer class="text-center text-xs text-slate-500 py-8">© <span id="year"></span> <span id="brandNameFooter">Team ABH PK Software</span>. All rights reserved.</footer>
+  <footer class="text-center text-xs text-slate-500 py-6">© <span id="year"></span> Pro Software Manager</footer>
 
-  <!-- App Script -->
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics-compat.js"></script>
+
   <script>
-  (() => {
-    const STORAGE_KEY = 'pro_scm_state_v2';
-    const uid = () => Math.random().toString(36).slice(2,10);
-    const today = () => new Date().toISOString().slice(0,10);
-    const money = (n, curr='PKR') => new Intl.NumberFormat(undefined,{style:'currency',currency:curr,maximumFractionDigits:0}).format(Number(n||0));
-    const qs = (sel, el=document) => el.querySelector(sel);
-    const qsa = (sel, el=document) => [...el.querySelectorAll(sel)];
+  /*****************************************************************
+   *  IMPORTANT:
+   *  1) Create a Firebase project in console.firebase.google.com
+   *  2) Enable Authentication (Email/Password and Google)
+   *  3) Enable Firestore (native mode)
+   *  4) Replace FIREBASE_CONFIG below with your project config (apiKey etc.)
+   *****************************************************************/
+  const FIREBASE_CONFIG = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "SENDER_ID",
+    appId: "APP_ID",
+    measurementId: "G-MEASUREMENT_ID"
+  };
 
-    const seed = () => ({
-      company: { name: 'Team ABH PK Software', email:'info@teamabhpk.me', phone:'+92 300 0000000', address:'Pakistan', currency:'PKR',
-        waTemplate: 'Assalam o Alaikum {name}\n\n{subject}\nDue: {due}\n{details}\n\nRegards, {company}',
-        mailSubject: 'Update from {company}: {subject}',
-        mailBody: 'Hi {name},\n\n{details}\n\nThanks,\n{company}',
-      },
-      team: [
-        {id: uid(), kind:'employee', name:'Abdul Basit', role:'Founder / PM', email:'abdul@example.com', phone:'+923001234567', rateType:'salary', salary:180000, skills:['Android','Firebase','UI/UX'], status:'Active', joined: today() },
-        {id: uid(), kind:'employee', name:'Ayesha Khan', role:'Frontend Dev', email:'ayesha@example.com', phone:'+923021112223', rateType:'salary', salary:150000, skills:['React','Tailwind'], status:'Active', joined: today() },
-      ],
-      freelancers: [
-        {id: uid(), kind:'freelancer', name:'Ali Raza', specialty:'Backend Dev', email:'ali@example.com', phone:'+923331234567', rateType:'hourly', rate:2000, status:'Active', joined: today(), hoursMonth: 0 },
-      ],
-      clients: [
-        {id: uid(), name:'GrozyMart', contact:'client@grozy.com', phone:'+92111111111', whats:'', address:'Lahore', notes:''},
-      ],
-      projects: [
-        {id: uid(), name:'Grocery App', clientId: null, budget:1200000, status:'In Progress', start:today(), due:'2025-09-15', managerId: null},
-      ],
-      tasks: [
-        {id: uid(), title:'Design checkout flow', projectId: null, assigneeId: null, assigneeKind:'employee', priority:'High', status:'Todo', due: '2025-08-25', estimateHrs:8, description:'Improve UX and validation.', created: today()},
-      ],
-      payroll: { history: [] }, // {month, currency, items:[{memberId, kind, base, bonus, deduct, hours, rate, net, paid}]}
-      invoices: [], // {id, toType:'client'|'freelancer', toId, date, items:[{desc, qty, rate, amt}], total}
-      attendance: {}, // {yyyy-mm-dd: { memberId: {in:'09:30', out:'17:30'} }}
-      leaves: [],
-      messages: [], // {id, date, toId, toKind, via:'wa'|'mail', subject, body}
-    });
+  // Initialize Firebase
+  firebase.initializeApp(FIREBASE_CONFIG);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  // optional analytics: firebase.analytics();
 
-    // --- State management ---
-    let state = load();
-    function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
-    function load(){ try{ const s = JSON.parse(localStorage.getItem(STORAGE_KEY)); return s||seed(); }catch(e){ return seed(); } }
-    function reset(){ if(confirm('Reset all data?')){ state = seed(); save(); location.reload(); } }
+  // Simple helper
+  const uid = () => crypto.getRandomValues(new Uint32Array(1))[0].toString(36);
+  const today = () => new Date().toISOString().slice(0,10);
+  const moneyFmt = (n,c='USD') => new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:0}).format(Number(n||0));
+  const el = (s)=>document.querySelector(s);
+  const els = (s)=>[...document.querySelectorAll(s)];
 
-    // --- Navigation ---
-    const NAV = [
-      {key:'dashboard', label:'Dashboard', icon:'fa-gauge-high'},
-      {key:'team', label:'Team', icon:'fa-people-group'},
-      {key:'freelancers', label:'Freelancers', icon:'fa-user-tie'},
-      {key:'clients', label:'Clients', icon:'fa-handshake'},
-      {key:'projects', label:'Projects', icon:'fa-diagram-project'},
-      {key:'tasks', label:'Tasks', icon:'fa-list-check'},
-      {key:'payroll', label:'Payroll', icon:'fa-sack-dollar'},
-      {key:'invoices', label:'Invoices', icon:'fa-file-invoice-dollar'},
-      {key:'attendance', label:'Attendance', icon:'fa-user-check'},
-      {key:'leaves', label:'Leaves', icon:'fa-calendar-days'},
-      {key:'messaging', label:'Messaging', icon:'fa-paper-plane'},
-      {key:'reports', label:'Reports', icon:'fa-chart-line'},
-      {key:'settings', label:'Settings', icon:'fa-gear'},
-      {key:'importExport', label:'Import/Export', icon:'fa-file-arrow-up'},
-    ];
+  // App state
+  let current = 'dashboard';
+  const NAV = [
+    {key:'dashboard',label:'Dashboard',icon:'fa-gauge-high'},
+    {key:'team',label:'Team',icon:'fa-people-group'},
+    {key:'freelancers',label:'Freelancers',icon:'fa-user-tie'},
+    {key:'clients',label:'Clients',icon:'fa-handshake'},
+    {key:'projects',label:'Projects',icon:'fa-diagram-project'},
+    {key:'tasks',label:'Tasks',icon:'fa-list-check'},
+    {key:'payroll',label:'Payroll',icon:'fa-sack-dollar'},
+    {key:'invoices',label:'Invoices',icon:'fa-file-invoice-dollar'},
+    {key:'attendance',label:'Attendance',icon:'fa-user-check'},
+    {key:'leaves',label:'Leaves',icon:'fa-calendar-days'},
+    {key:'messaging',label:'Messaging',icon:'fa-paper-plane'},
+    {key:'reports',label:'Reports',icon:'fa-chart-line'},
+    {key:'settings',label:'Settings',icon:'fa-gear'},
+    {key:'backup',label:'Backup/Restore',icon:'fa-file-arrow-up'}
+  ];
 
-    let current = 'dashboard';
-    const navEl = qs('#nav');
+  // Render sidebar nav
+  function renderNav(){
+    const nav = el('#nav'); nav.innerHTML = '';
     NAV.forEach(n=>{
       const btn = document.createElement('button');
-      btn.className = 'w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 flex items-center gap-2';
-      btn.innerHTML = `<i class="fa-solid ${n.icon} w-5 text-slate-600"></i><span>${n.label}</span>`;
-      btn.addEventListener('click', () => { current = n.key; render(); });
-      navEl.appendChild(btn);
+      btn.className = 'w-full text-left p-2 rounded hover:bg-slate-50 flex items-center gap-3';
+      btn.innerHTML = `<i class="fa-solid ${n.icon} w-4"></i><span>${n.label}</span>`;
+      btn.onclick = ()=>{ current=n.key; render(); if(window.innerWidth<768) el('#sidebar').classList.add('hidden'); };
+      nav.appendChild(btn);
     });
+  }
 
-    // Header info
-    qs('#year').textContent = new Date().getFullYear();
-    qs('#brandName').textContent = state.company.name;
-    qs('#brandNameFooter').textContent = state.company.name;
-    qs('#brandMeta').textContent = `${state.company.email} • ${state.company.phone}`;
-    qs('#toggleSidebar').addEventListener('click', ()=> qs('#sidebar').classList.toggle('hidden'))
+  // Authentication UI (modal simple)
+  function openAuthModal(mode='login'){
+    const wrap = document.createElement('div'); wrap.className='fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4';
+    wrap.innerHTML = `<div class="bg-white rounded-2xl w-full max-w-md p-4">
+      <div class="flex justify-between items-center mb-2"><h3 class="text-lg font-semibold">${mode==='login'?'Login':'Sign up'}</h3><button id="closeAuth" class="btn-ghost">✕</button></div>
+      <form id="authForm" class="space-y-3">
+        <label class="block small">Email <input name="email" class="input" type="email" required></label>
+        <label class="block small">Password <input name="password" class="input" type="password" required></label>
+        <div class="flex gap-2 justify-end"><button type="button" id="googleSign" class="btn-ghost">Sign with Google</button><button class="btn" type="submit">${mode==='login'?'Login':'Create'}</button></div>
+      </form>
+    </div>`;
+    document.body.appendChild(wrap);
+    wrap.querySelector('#closeAuth').addEventListener('click', ()=>wrap.remove());
+    wrap.querySelector('#googleSign').addEventListener('click', async ()=>{
+      const provider = new firebase.auth.GoogleAuthProvider();
+      try{ await auth.signInWithPopup(provider); wrap.remove(); }catch(e){ alert(e.message); }
+    });
+    wrap.querySelector('#authForm').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const form = new FormData(e.target);
+      const email = form.get('email'), pass = form.get('password');
+      try{
+        if(mode==='login'){ await auth.signInWithEmailAndPassword(email,pass); }
+        else { await auth.createUserWithEmailAndPassword(email,pass); }
+        wrap.remove();
+      }catch(err){ alert(err.message); }
+    });
+  }
 
-    // --- Helpers ---
-    const byId = (arr, id) => arr.find(x=>x.id===id);
-    const dl = (filename, text, type='text/plain') => { const blob = new Blob([text], {type}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url); };
-    const fill = (tpl, map) => (tpl||'').replace(/\{(.*?)\}/g, (_,k)=> map[k] ?? '');
-    const waLink = (phone, text) => `https://wa.me/${(phone||'').replace(/[^0-9]/g,'')}?text=${encodeURIComponent(text)}`;
-    const mailto = (email, subject, body) => `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-
-    // --- Render sections ---
-    const main = qs('#main');
-
-    function KPI(title, value, note){
-      return `<div class="card p-4"><div class="text-sm text-slate-600">${title}</div><div class="text-3xl font-bold mt-1">${value}</div><div class="text-xs text-slate-500 mt-1">${note||''}</div></div>`;
+  // Basic layout renderers
+  function setHeaderUser(user){
+    if(user){
+      el('#userArea').classList.remove('hidden'); el('#authArea').classList.add('hidden');
+      el('#userName').textContent = user.displayName || user.email;
+    } else {
+      el('#userArea').classList.add('hidden'); el('#authArea').classList.remove('hidden');
     }
+  }
 
-    function render(){
-      save();
-      const c = current;
-      main.innerHTML = '';
-      if(c==='dashboard') return renderDashboard();
-      if(c==='team') return renderTeam();
-      if(c==='freelancers') return renderFreelancers();
-      if(c==='clients') return renderClients();
-      if(c==='projects') return renderProjects();
-      if(c==='tasks') return renderTasks();
-      if(c==='payroll') return renderPayroll();
-      if(c==='invoices') return renderInvoices();
-      if(c==='attendance') return renderAttendance();
-      if(c==='leaves') return renderLeaves();
-      if(c==='messaging') return renderMessaging();
-      if(c==='reports') return renderReports();
-      if(c==='settings') return renderSettings();
-      if(c==='importExport') return renderImportExport();
+  // Page render dispatcher
+  async function render(){
+    el('#year').textContent = new Date().getFullYear();
+    renderNav();
+    setHeaderUser(auth.currentUser);
+    switch(current){
+      case 'dashboard': return renderDashboard();
+      case 'team': return renderTeam();
+      case 'freelancers': return renderFreelancers();
+      case 'clients': return renderClients();
+      case 'projects': return renderProjects();
+      case 'tasks': return renderTasks();
+      case 'payroll': return renderPayroll();
+      case 'invoices': return renderInvoices();
+      case 'attendance': return renderAttendance();
+      case 'leaves': return renderLeaves();
+      case 'messaging': return renderMessaging();
+      case 'reports': return renderReports();
+      case 'settings': return renderSettings();
+      case 'backup': return renderBackup();
+      default: return renderDashboard();
     }
+  }
 
-    // ---- DASHBOARD ----
-    function renderDashboard(){
-      const openTasks = state.tasks.filter(t=>t.status!=='Done').length;
-      const doneTasks = state.tasks.filter(t=>t.status==='Done').length;
-      const activeProjects = state.projects.filter(p=>p.status!=='Completed').length;
-      const members = state.team.length + state.freelancers.length;
-      main.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          ${KPI('People', members, 'Employees + Freelancers')}
-          ${KPI('Open Tasks', openTasks, 'Not done yet')}
-          ${KPI('Completed Tasks', doneTasks, 'All time')}
-          ${KPI('Active Projects', activeProjects, 'In progress or planned')}
+  /* ===========================
+     Real-time listeners & helpers
+     =========================== */
+  // We will snapshot collections on-demand rather than persistent listeners for simplicity.
+  async function fetchCollection(name, whereClause=null){
+    let q = db.collection(name);
+    if(whereClause) q = q.where(...whereClause);
+    const snap = await q.get();
+    return snap.docs.map(d=>({id:d.id, ...d.data()}));
+  }
+  async function getDoc(collection, id){
+    const d = await db.collection(collection).doc(id).get();
+    return d.exists ? {id:d.id, ...d.data()} : null;
+  }
+  function saveDoc(collection, id, data){
+    if(!id) return db.collection(collection).add(data);
+    return db.collection(collection).doc(id).set(data, {merge:true});
+  }
+  function delDoc(collection, id){ return db.collection(collection).doc(id).delete(); }
+
+  // Small modal form helper
+  function openForm(title, innerHtml, onSubmit){
+    const wrap = document.createElement('div'); wrap.className='fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4';
+    wrap.innerHTML = `<div class="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-auto p-4">
+      <div class="flex items-center justify-between mb-2"><h3 class="text-lg font-semibold">${title}</h3><button id="closeForm" class="btn-ghost">✕</button></div>
+      <form id="modalForm" class="space-y-3">${innerHtml}
+        <div class="flex justify-end gap-2 mt-2"><button type="button" id="cancelForm" class="btn-ghost">Cancel</button><button class="btn" type="submit">Save</button></div>
+      </form>
+    </div>`;
+    document.body.appendChild(wrap);
+    wrap.querySelector('#closeForm').addEventListener('click', ()=>wrap.remove());
+    wrap.querySelector('#cancelForm').addEventListener('click', ()=>wrap.remove());
+    wrap.querySelector('#modalForm').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      onSubmit(data);
+      wrap.remove();
+    });
+  }
+
+  /* ===========================
+     Pages
+     =========================== */
+
+  // 1) Dashboard
+  async function renderDashboard(){
+    const [team, freelancers, clients, projects, tasks] = await Promise.all([
+      fetchCollection('team'), fetchCollection('freelancers'), fetchCollection('clients'), fetchCollection('projects'), fetchCollection('tasks')
+    ]);
+    const openTasks = tasks.filter(t=>t.status!=='Done').length;
+    const completed = tasks.filter(t=>t.status==='Done').length;
+    const html = `
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div class="card p-4"><div class="small">People</div><div class="text-2xl font-bold mt-1">${team.length + freelancers.length}</div><div class="small">Employees + Freelancers</div></div>
+        <div class="card p-4"><div class="small">Open Tasks</div><div class="text-2xl font-bold mt-1">${openTasks}</div></div>
+        <div class="card p-4"><div class="small">Completed</div><div class="text-2xl font-bold mt-1">${completed}</div></div>
+        <div class="card p-4"><div class="small">Active Projects</div><div class="text-2xl font-bold mt-1">${projects.filter(p=>p.status!=='Completed').length}</div></div>
+      </div>
+      <div class="card p-4">
+        <h3 class="font-semibold">Quick Actions</h3>
+        <div class="mt-3 flex gap-2">
+          <button class="btn" onclick="openQuick('task')"><i class="fa-solid fa-plus"></i> Quick Task</button>
+          <button class="btn-ghost" onclick="current='projects'; render();">Manage Projects</button>
         </div>
-        <div class="card p-6 mt-4">
-          <div class="text-lg font-semibold mb-2">Welcome to ${state.company.name}</div>
-          <p class="text-slate-700">All-in-one manager for team, freelancers, clients, projects, tasks, payroll, invoices and messaging. Your data is saved in this browser using LocalStorage. You can export/import JSON anytime from <b>Import/Export</b>.</p>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <button class="btn" onclick="location.hash='#tasks'">Quick: New Task</button>
-            <button class="btn-ghost" onclick="(${reset.toString()})();">Reset Data</button>
-          </div>
-        </div>
-      `;
-    }
+      </div>
+    `;
+    el('#main').innerHTML = html;
+  }
 
-    // ---- TEAM ----
-    function renderTeam(){
-      const list = state.team;
-      const rows = list.map(m=>`
-        <div class="card p-4">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="font-semibold">${m.name}</div>
-              <div class="text-sm text-slate-600">${m.role}</div>
-              <div class="mt-1 flex flex-wrap gap-1">${(m.skills||[]).map(s=>`<span class='pill pill-green'>${s}</span>`).join('')}</div>
-            </div>
-            <span class="pill ${m.status==='Active'?'pill-green':'pill-amber'}">${m.status}</span>
+  // Quick action
+  window.openQuick = (type)=>{
+    if(type==='task'){
+      openForm('Quick Task', `<label class="block small">Title<input name="title" class="input" required></label><label class="block small">Description<textarea name="description" class="textarea"></textarea></label>`, async (vals)=>{
+        await saveDoc('tasks', null, {title:vals.title, description:vals.description, status:'Todo', priority:'Medium', createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+        alert('Task created'); render();
+      });
+    }
+  };
+
+  // 2) Team
+  async function renderTeam(){
+    const list = await fetchCollection('team');
+    const rows = list.map(m=>`
+      <div class="p-3 card mb-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">${m.name||'(no name)'}</div>
+            <div class="small">${m.role||''} • ${m.email||''}</div>
           </div>
-          <div class="text-sm text-slate-600 mt-3 space-y-1">
-            <div>📧 ${m.email}</div>
-            <div>📱 ${m.phone}</div>
-            <div>💼 Salary: <b>${money(m.salary, state.company.currency)}</b></div>
-            <div>📅 Joined: ${m.joined}</div>
-          </div>
-          <div class="flex gap-2 mt-4">
-            <a class="btn" target="_blank" href="${waLink(m.phone, fill(state.company.waTemplate,{name:m.name,subject:'Update',due:today(),details:'Hello',company:state.company.name}))}"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-            <a class="btn" href="${mailto(m.email, fill(state.company.mailSubject,{company:state.company.name,subject:'Update'}), fill(state.company.mailBody,{company:state.company.name,name:m.name,details:'Hello'}))}"><i class="fa-regular fa-envelope"></i> Email</a>
+          <div class="flex gap-2 items-center">
+            <a target="_blank" href="https://wa.me/${(m.phone||'').replace(/\+/g,'')}" class="btn-ghost"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="mailto:${m.email||''}" class="btn-ghost"><i class="fa-regular fa-envelope"></i></a>
             <button class="btn-ghost" onclick="editTeam('${m.id}')">Edit</button>
-            <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delTeam('${m.id}')">Delete</button>
+            <button class="btn" style="background:#dc2626" onclick="deleteDocConfirm('team','${m.id}')">Delete</button>
           </div>
         </div>
-      `).join('');
-
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${list.length}</div>
-          <button class="btn" onclick="editTeam()"><i class="fa-solid fa-plus"></i> Add Member</button>
-        </div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-
-    // Expose small handlers for inline HTML usage
-    window.editTeam = (id) => {
-      const m = id ? byId(state.team,id) : {id:uid(), name:'', role:'', email:'', phone:'', rateType:'salary', salary:0, skills:[], status:'Active', joined: today()};
-      openForm('Team Member', `
-        ${input('Name','name',m.name)}
-        ${input('Role','role',m.role)}
-        ${input('Email','email',m.email,'email')}
-        ${input('Phone','phone',m.phone)}
-        ${select('Status','status',['Active','Inactive','Probation'], m.status)}
-        ${input('Salary','salary',m.salary,'number')}
-        ${input('Skills (comma separated)','skills',(m.skills||[]).join(', '))}
-      `, (vals)=>{
-        const rec = { ...m, ...vals, salary:Number(vals.salary||0), skills:(vals.skills||'').split(',').map(x=>x.trim()).filter(Boolean) };
-        const exist = state.team.some(x=>x.id===rec.id);
-        state.team = exist ? state.team.map(x=>x.id===rec.id?rec:x) : [rec, ...state.team];
-        render();
-      });
-    };
-    window.delTeam = (id)=>{ if(confirm('Delete member?')){ state.team = state.team.filter(m=>m.id!==id); render(); } };
-
-    // ---- FREELANCERS ----
-    function renderFreelancers(){
-      const list = state.freelancers;
-      const rows = list.map(f=>`
-        <div class="card p-4">
-          <div class="flex items-start justify-between gap-4">
-            <div>
-              <div class="font-semibold">${f.name}</div>
-              <div class="text-sm text-slate-600">${f.specialty}</div>
-            </div>
-            <span class="pill ${f.status==='Active'?'pill-green':'pill-amber'}">${f.status}</span>
-          </div>
-          <div class="text-sm text-slate-600 mt-3 space-y-1">
-            <div>📧 ${f.email}</div>
-            <div>📱 ${f.phone}</div>
-            <div>💲 Rate: <b>${f.rateType==='hourly'? money(f.rate, state.company.currency)+'/hr' : money(f.rate, state.company.currency)}</b></div>
-            <div>⏱️ Hours (this month): ${f.hoursMonth||0}</div>
-          </div>
-          <div class="flex gap-2 mt-4">
-            <a class="btn" target="_blank" href="${waLink(f.phone, fill(state.company.waTemplate,{name:f.name,subject:'Task',due:today(),details:'Hello',company:state.company.name}))}"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-            <a class="btn" href="${mailto(f.email, fill(state.company.mailSubject,{company:state.company.name,subject:'Task'}), fill(state.company.mailBody,{company:state.company.name,name:f.name,details:'Hello'}))}"><i class="fa-regular fa-envelope"></i> Email</a>
-            <button class="btn-ghost" onclick="editFreelancer('${f.id}')">Edit</button>
-            <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delFreelancer('${f.id}')">Delete</button>
-          </div>
-        </div>
-      `).join('');
-
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${list.length}</div>
-          <div class="flex gap-2">
-            <button class="btn" onclick="editFreelancer()"><i class="fa-solid fa-plus"></i> Add Freelancer</button>
-            <button class="btn-ghost" onclick="logHoursFreelancer()"><i class="fa-regular fa-clock"></i> Log Hours</button>
-          </div>
-        </div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-
-    window.editFreelancer = (id) => {
-      const f = id ? byId(state.freelancers,id) : {id:uid(), name:'', specialty:'', email:'', phone:'', rateType:'hourly', rate:0, status:'Active', joined:today(), hoursMonth:0};
-      openForm('Freelancer', `
-        ${input('Name','name',f.name)}
-        ${input('Specialty','specialty',f.specialty)}
-        ${input('Email','email',f.email,'email')}
-        ${input('Phone','phone',f.phone)}
-        ${select('Rate Type','rateType',['hourly','fixed'], f.rateType)}
-        ${input('Rate','rate',f.rate,'number')}
-        ${select('Status','status',['Active','Inactive'], f.status)}
-      `, (vals)=>{
-        const rec = { ...f, ...vals, rate:Number(vals.rate||0) };
-        const exist = state.freelancers.some(x=>x.id===rec.id);
-        state.freelancers = exist ? state.freelancers.map(x=>x.id===rec.id?rec:x) : [rec, ...state.freelancers];
-        render();
-      });
-    }
-    window.delFreelancer = (id)=>{ if(confirm('Delete freelancer?')){ state.freelancers = state.freelancers.filter(f=>f.id!==id); render(); } };
-    window.logHoursFreelancer = ()=>{
-      const options = state.freelancers.map(f=>`<option value='${f.id}'>${f.name}</option>`).join('');
-      openForm('Log Hours (This Month)', `
-        <label class='block mb-3'><div class='label'>Freelancer</div><select name='fid' class='select'>${options}</select></label>
-        ${input('Hours','hours',0,'number')}
-      `, (vals)=>{
-        const f = byId(state.freelancers, vals.fid);
-        f.hoursMonth = Number(f.hoursMonth||0) + Number(vals.hours||0);
-        render();
-      });
-    }
-
-    // ---- CLIENTS ----
-    function renderClients(){
-      const rows = state.clients.map(c=>`
-        <div class="card p-4">
-          <div class="flex items-start justify-between">
-            <div>
-              <div class="font-semibold">${c.name}</div>
-              <div class="text-sm text-slate-600">${c.contact}</div>
-            </div>
-            <div class="text-xs text-slate-600">${c.phone||''}</div>
-          </div>
-          <div class="text-sm text-slate-600 mt-2">${c.address||''}</div>
-          <div class="text-sm text-slate-600 mt-1">${c.notes||''}</div>
-          <div class="flex gap-2 mt-3">
-            <a class="btn" target="_blank" href="${waLink(c.phone||'', fill(state.company.waTemplate,{name:c.name,subject:'Project',due:today(),details:'Hello',company:state.company.name}))}"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-            <a class="btn" href="${mailto(c.contact, fill(state.company.mailSubject,{company:state.company.name,subject:'Project'}), fill(state.company.mailBody,{company:state.company.name,name:c.name,details:'Hello'}))}"><i class="fa-regular fa-envelope"></i> Email</a>
-            <button class="btn-ghost" onclick="editClient('${c.id}')">Edit</button>
-            <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delClient('${c.id}')">Delete</button>
-          </div>
-        </div>
-      `).join('');
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${state.clients.length}</div>
-          <button class="btn" onclick="editClient()"><i class="fa-solid fa-plus"></i> New Client</button>
-        </div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-    window.editClient = (id)=>{
-      const c = id ? byId(state.clients,id) : {id:uid(), name:'', contact:'', phone:'', address:'', notes:''};
-      openForm('Client', `
-        ${input('Name','name',c.name)}
-        ${input('Email','contact',c.contact,'email')}
-        ${input('Phone','phone',c.phone)}
-        ${input('Address','address',c.address)}
-        ${textarea('Notes','notes',c.notes)}
-      `, (vals)=>{
-        const rec = {...c, ...vals};
-        const exist = state.clients.some(x=>x.id===rec.id);
-        state.clients = exist ? state.clients.map(x=>x.id===rec.id?rec:x) : [rec, ...state.clients];
-        render();
-      });
-    }
-    window.delClient = (id)=>{ if(confirm('Delete client?')){ state.clients = state.clients.filter(c=>c.id!==id); render(); } };
-
-    // ---- PROJECTS ----
-    function renderProjects(){
-      const optsClient = ['<option value="">— None —</option>'].concat(state.clients.map(c=>`<option value='${c.id}'>${c.name}</option>`)).join('');
-      const optsMgr = ['<option value="">— None —</option>'].concat(state.team.map(m=>`<option value='${m.id}'>${m.name}</option>`)).join('');
-      const rows = state.projects.map(p=>{
-        const client = p.clientId? byId(state.clients,p.clientId)?.name : '-';
-        return `
-          <div class="card p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-semibold">${p.name}</div>
-                <div class="text-sm text-slate-600">Client: ${client}</div>
-              </div>
-              <span class="pill ${p.status==='Completed'?'pill-green':p.status==='In Progress'?'pill-amber':'pill-red'}">${p.status}</span>
-            </div>
-            <div class="text-sm text-slate-600 mt-2">Budget: <b>${money(p.budget, state.company.currency)}</b></div>
-            <div class="text-xs text-slate-500">${p.start} → ${p.due}</div>
-            <div class="flex gap-2 mt-3">
-              <button class="btn-ghost" onclick="editProject('${p.id}')">Edit</button>
-              <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delProject('${p.id}')">Delete</button>
-            </div>
-          </div>`;
-      }).join('');
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${state.projects.length}</div>
-          <button class="btn" onclick="editProject()"><i class="fa-solid fa-plus"></i> New Project</button>
-        </div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-    window.editProject = (id)=>{
-      const p = id ? byId(state.projects,id) : {id:uid(), name:'', clientId:'', budget:0, status:'Planned', start:today(), due:today(), managerId:''};
-      const clientOpts = ['<option value="">— None —</option>'].concat(state.clients.map(c=>`<option value='${c.id}'>${c.name}</option>`)).join('');
-      const mgrOpts = ['<option value="">— None —</option>'].concat(state.team.map(m=>`<option value='${m.id}'>${m.name}</option>`)).join('');
-      openForm('Project', `
-        ${input('Name','name',p.name)}
-        <label class='block mb-3'><div class='label'>Client</div><select name='clientId' class='select'>${clientOpts}</select></label>
-        ${input('Budget','budget',p.budget,'number')}
-        ${select('Status','status',['Planned','In Progress','On Hold','Completed'], p.status)}
-        ${input('Start','start',p.start,'date')}
-        ${input('Due','due',p.due,'date')}
-        <label class='block mb-3'><div class='label'>Manager</div><select name='managerId' class='select'>${mgrOpts}</select></label>
-      `, (vals)=>{
-        const rec = {...p, ...vals, budget:Number(vals.budget||0)};
-        const exist = state.projects.some(x=>x.id===rec.id);
-        state.projects = exist ? state.projects.map(x=>x.id===rec.id?rec:x) : [rec, ...state.projects];
-        render();
-      });
-    }
-    window.delProject = (id)=>{ if(confirm('Delete project?')){ state.projects = state.projects.filter(p=>p.id!==id); render(); } };
-
-    // ---- TASKS ----
-    function renderTasks(){
-      const lanes = ['Todo','In Progress','Blocked','Done'];
-      const members = [...state.team.map(m=>({id:m.id, name:m.name, kind:'employee'})), ...state.freelancers.map(f=>({id:f.id, name:f.name, kind:'freelancer'}))];
-      const projOpts = ['<option value="">— None —</option>'].concat(state.projects.map(p=>`<option value='${p.id}'>${p.name}</option>`)).join('');
-      const memberOpts = ['<option value="">— Unassigned —</option>'].concat(members.map(m=>`<option value='${m.kind}:${m.id}'>${m.name} (${m.kind})</option>`)).join('');
-
-      const laneCol = (lane)=>{
-        const tasks = state.tasks.filter(t=>t.status===lane);
-        return `
-          <div class="bg-slate-50 rounded-2xl p-3 border">
-            <div class="flex items-center justify-between mb-2">
-              <div class="font-semibold">${lane}</div>
-              <span class="pill pill-amber">${tasks.length}</span>
-            </div>
-            <div class="space-y-3">
-              ${tasks.map(t=>{
-                const proj = t.projectId? byId(state.projects,t.projectId)?.name : '';
-                const mem = t.assigneeId? (t.assigneeKind==='employee'? byId(state.team,t.assigneeId) : byId(state.freelancers,t.assigneeId)) : null;
-                return `
-                  <div class="card p-3">
-                    <div class="flex items-center justify-between">
-                      <div class="font-medium">${t.title}</div>
-                      <span class="pill ${t.priority==='High'?'pill-red':t.priority==='Low'?'pill-green':'pill-amber'}">${t.priority}</span>
-                    </div>
-                    <div class="text-sm text-slate-600 mt-1">${t.description||''}</div>
-                    <div class="text-xs text-slate-500 mt-1">Due: ${t.due} • Est: ${t.estimateHrs||0}h</div>
-                    <div class="text-xs text-slate-600 mt-1">${proj?('📦 '+proj):''} ${mem?(' • 👤 '+mem.name):''}</div>
-                    <div class="flex gap-2 mt-2">
-                      <button class="btn-ghost" onclick="editTask('${t.id}')">Edit</button>
-                      <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delTask('${t.id}')">Delete</button>
-                      ${t.status!=='Done' ? `<button class='btn bg-emerald-600 hover:bg-emerald-700' onclick="setTaskDone('${t.id}')">Mark Done</button>` : ''}
-                    </div>
-                  </div>`
-              }).join('')}
-            </div>
-          </div>`;
-      };
-
-      main.innerHTML = `
-        <div class="flex flex-wrap gap-2 items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${state.tasks.length}</div>
-          <div class="flex gap-2">
-            <button class="btn" onclick="editTask()"><i class="fa-solid fa-plus"></i> New Task</button>
-          </div>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          ${lanes.map(laneCol).join('')}
-        </div>
-      `;
-    }
-
-    window.editTask = (id)=>{
-      const t = id ? byId(state.tasks,id) : {id:uid(), title:'', projectId:'', assigneeId:'', assigneeKind:'employee', priority:'Medium', status:'Todo', due: today(), estimateHrs:4, description:'', created: today()};
-      const projOpts = ['<option value="">— None —</option>'].concat(state.projects.map(p=>`<option value='${p.id}'>${p.name}</option>`)).join('');
-      const memberOpts = ['<option value="">— Unassigned —</option>']
-        .concat(state.team.map(m=>`<option value='employee:${m.id}'>${m.name} (employee)</option>`))
-        .concat(state.freelancers.map(f=>`<option value='freelancer:${f.id}'>${f.name} (freelancer)</option>`)).join('');
-      openForm('Task', `
-        ${input('Title','title',t.title)}
-        <label class='block mb-3'><div class='label'>Project</div><select name='projectId' class='select'>${projOpts}</select></label>
-        <label class='block mb-3'><div class='label'>Assignee</div><select name='assignee' class='select'>${memberOpts}</select></label>
-        ${select('Priority','priority',['Low','Medium','High'], t.priority)}
-        ${select('Status','status',['Todo','In Progress','Blocked','Done'], t.status)}
-        ${input('Due Date','due',t.due,'date')}
-        ${input('Estimate (hours)','estimateHrs',t.estimateHrs,'number')}
-        ${textarea('Description','description',t.description)}
-      `, (vals)=>{
-        let assigneeId = ''; let assigneeKind='employee';
-        if(vals.assignee){ const [k,id] = vals.assignee.split(':'); assigneeKind = k; assigneeId=id; }
-        const rec = {...t, ...vals, projectId: vals.projectId||'', assigneeId, assigneeKind, estimateHrs:Number(vals.estimateHrs||0)};
-        const exist = state.tasks.some(x=>x.id===rec.id);
-        state.tasks = exist ? state.tasks.map(x=>x.id===rec.id?rec:x) : [rec, ...state.tasks];
-        render();
-      });
-    }
-    window.delTask = (id)=>{ if(confirm('Delete task?')){ state.tasks = state.tasks.filter(t=>t.id!==id); render(); } };
-    window.setTaskDone = (id)=>{ const t = byId(state.tasks,id); t.status='Done'; render(); };
-
-    // ---- PAYROLL ----
-    function renderPayroll(){
-      const month = new Date().toISOString().slice(0,7);
-      const run = state.payroll.history.find(h=>h.month===month) || null;
-      const header = `
-        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-          <div class="text-sm text-slate-600">Month: ${month}</div>
-          <div class="flex gap-2">
-            ${run? `<button class='btn-ghost' onclick='exportPayroll("${month}")'><i class="fa-regular fa-file"></i> Export CSV</button>` : ''}
-            ${!run? `<button class='btn' onclick='runPayroll("${month}")'><i class="fa-solid fa-play"></i> Run Payroll</button>`: ''}
-          </div>
-        </div>`;
-      let body = '';
-      if(run){
-        const rows = run.items.map((it,i)=>{
-          const mem = it.kind==='employee'? byId(state.team,it.memberId) : byId(state.freelancers,it.memberId);
-          return `
-            <tr class="border-t">
-              <td class="p-3">${mem?.name||'-'} <span class="text-xs text-slate-500">(${it.kind})</span></td>
-              <td class="p-3">${money(it.base, run.currency)}</td>
-              <td class="p-3"><input type='number' class='input' value='${it.bonus||0}' onchange='updatePayrollItem("${month}",${i},"bonus",this.value)'></td>
-              <td class="p-3"><input type='number' class='input' value='${it.deduct||0}' onchange='updatePayrollItem("${month}",${i},"deduct",this.value)'></td>
-              <td class="p-3">${it.kind==='freelancer'? (it.hours||0) : '-'}</td>
-              <td class="p-3">${money(it.net, run.currency)}</td>
-              <td class="p-3">${it.paid? '<span class="pill pill-green">Paid</span>':'<span class="pill pill-amber">Unpaid</span>'}</td>
-              <td class="p-3"><button class='btn bg-emerald-600 hover:bg-emerald-700' ${it.paid?'disabled':''} onclick='markPaid("${month}",${i})'>Mark Paid</button></td>
-            </tr>`;
-        }).join('');
-        body = `
-          <div class="overflow-x-auto card">
-            <table class="min-w-full">
-              <thead class="bg-slate-50 text-left">
-                <tr>
-                  <th class="p-3">Name</th>
-                  <th class="p-3">Base</th>
-                  <th class="p-3">Bonus</th>
-                  <th class="p-3">Deduct</th>
-                  <th class="p-3">Hours</th>
-                  <th class="p-3">Net</th>
-                  <th class="p-3">Paid</th>
-                  <th class="p-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>`;
-      } else {
-        body = `<div class='card p-6 text-slate-600'>No run for this month yet.</div>`;
-      }
-
-      main.innerHTML = header + body;
-    }
-
-    window.runPayroll = (month)=>{
-      if(state.payroll.history.find(h=>h.month===month)) return;
-      const itemsEmp = state.team.map(m=>({ memberId:m.id, kind:'employee', base:Number(m.salary||0), bonus:0, deduct:0, net:Number(m.salary||0), paid:false }));
-      const itemsFree = state.freelancers.map(f=>({ memberId:f.id, kind:'freelancer', base:0, bonus:0, deduct:0, hours:Number(f.hoursMonth||0), rate:Number(f.rate||0), net: Number(f.hoursMonth||0) * Number(f.rate||0), paid:false }));
-      const items = [...itemsEmp, ...itemsFree];
-      state.payroll.history.unshift({ month, currency: state.company.currency, items });
-      render();
-    }
-    window.updatePayrollItem = (month, idx, key, val)=>{
-      const run = state.payroll.history.find(h=>h.month===month); if(!run) return;
-      const it = run.items[idx]; it[key] = Number(val||0);
-      if(it.kind==='employee') it.net = Number(it.base||0) + Number(it.bonus||0) - Number(it.deduct||0);
-      else it.net = (Number(it.hours||0)*Number(it.rate||0)) + Number(it.bonus||0) - Number(it.deduct||0);
-      render();
-    }
-    window.markPaid = (month, idx)=>{ const run = state.payroll.history.find(h=>h.month===month); run.items[idx].paid=true; render(); }
-    window.exportPayroll = (month)=>{
-      const run = state.payroll.history.find(h=>h.month===month); if(!run) return;
-      const header = 'Name,Kind,Base,Bonus,Deduct,Hours,Rate,Net,Paid';
-      const lines = run.items.map(it=>{
-        const mem = it.kind==='employee'? byId(state.team,it.memberId) : byId(state.freelancers,it.memberId);
-        return [mem?.name||'-', it.kind, it.base||0, it.bonus||0, it.deduct||0, it.hours||0, it.rate||0, it.net||0, it.paid?'Yes':'No'].join(',');
-      });
-      dl(`payroll_${month}.csv`, [header,...lines].join('\n'), 'text/csv');
-    }
-
-    // ---- INVOICES ----
-    function renderInvoices(){
-      const rows = state.invoices.map(inv=>{
-        const target = inv.toType==='client' ? byId(state.clients,inv.toId)?.name : byId(state.freelancers,inv.toId)?.name;
-        return `
-          <div class="card p-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-semibold">Invoice #${inv.id.slice(-6)}</div>
-                <div class="text-sm text-slate-600">To: ${target||'-'} (${inv.toType})</div>
-              </div>
-              <div class="text-sm font-semibold">${money(inv.total, state.company.currency)}</div>
-            </div>
-            <div class="text-xs text-slate-500">Date: ${inv.date}</div>
-            <div class="flex gap-2 mt-3">
-              <button class="btn-ghost" onclick="previewInvoice('${inv.id}')"><i class="fa-regular fa-eye"></i> View/Print</button>
-              <button class="btn bg-rose-600 hover:bg-rose-700" onclick="delInvoice('${inv.id}')">Delete</button>
-            </div>
-          </div>`;
-      }).join('');
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${state.invoices.length}</div>
-          <button class="btn" onclick="createInvoice()"><i class="fa-solid fa-plus"></i> New Invoice</button>
-        </div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-
-    window.createInvoice = ()=>{
-      const toOpts = [
-        ...state.clients.map(c=>`<option value='client:${c.id}'>Client: ${c.name}</option>`),
-        ...state.freelancers.map(f=>`<option value='freelancer:${f.id}'>Freelancer: ${f.name}</option>`),
-      ].join('');
-      openForm('New Invoice', `
-        <label class='block mb-3'><div class='label'>To</div><select name='to' class='select'>${toOpts}</select></label>
-        ${input('Date','date',today(),'date')}
-        ${textarea('Line Items (one per line: description | qty | rate)','lines','Design work | 10 | 2000\nConsultation | 2 | 5000')}
-      `, (vals)=>{
-        const items = (vals.lines||'').split(/\n+/).map(l=>{
-          const [desc, qty, rate] = l.split('|').map(s=>s.trim());
-          const q = Number(qty||0), r=Number(rate||0); return {desc, qty:q, rate:r, amt:q*r};
-        }).filter(x=>x.desc);
-        const total = items.reduce((s,it)=>s+it.amt,0);
-        const [toType,toId] = vals.to.split(':');
-        const inv = { id: uid(), toType, toId, date: vals.date, items, total };
-        state.invoices.unshift(inv); render();
-      });
-    }
-    window.previewInvoice = (id)=>{
-      const inv = byId(state.invoices,id); if(!inv) return;
-      const target = inv.toType==='client' ? byId(state.clients,inv.toId) : byId(state.freelancers,inv.toId);
-      const html = `
-        <div style="font-family:ui-sans-serif,sans-serif;max-width:800px;margin:0 auto;padding:24px">
-          <h2 style="font-size:20px;font-weight:700;margin:0 0 8px">${state.company.name}</h2>
-          <div style="color:#334155">${state.company.address} • ${state.company.email} • ${state.company.phone}</div>
-          <hr style="margin:16px 0"/>
-          <div style="display:flex;justify-content:space-between">
-            <div>
-              <div style="font-weight:600">Bill To</div>
-              <div>${target?.name||'-'}</div>
-              <div>${inv.toType}</div>
-            </div>
-            <div>
-              <div><b>Invoice:</b> #${inv.id.slice(-6)}</div>
-              <div><b>Date:</b> ${inv.date}</div>
-            </div>
-          </div>
-          <table style="width:100%;margin-top:16px;border-collapse:collapse">
-            <thead>
-              <tr style="background:#f1f5f9;text-align:left">
-                <th style="padding:8px;border:1px solid #e2e8f0">Description</th>
-                <th style="padding:8px;border:1px solid #e2e8f0">Qty</th>
-                <th style="padding:8px;border:1px solid #e2e8f0">Rate</th>
-                <th style="padding:8px;border:1px solid #e2e8f0">Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${inv.items.map(it=>`<tr><td style='padding:8px;border:1px solid #e2e8f0'>${it.desc}</td><td style='padding:8px;border:1px solid #e2e8f0'>${it.qty}</td><td style='padding:8px;border:1px solid #e2e8f0'>${money(it.rate,state.company.currency)}</td><td style='padding:8px;border:1px solid #e2e8f0'>${money(it.amt,state.company.currency)}</td></tr>`).join('')}
-            </tbody>
-          </table>
-          <div style="text-align:right;margin-top:12px"><b>Total:</b> ${money(inv.total,state.company.currency)}</div>
-          <div style="margin-top:24px;font-size:12px;color:#475569">Thanks for your business.</div>
-          <button onclick="window.print()" style="margin-top:16px;padding:8px 12px;border-radius:12px;background:#0f172a;color:white">Print / Save PDF</button>
-        </div>`;
-      const w = window.open('','_blank'); w.document.write(html); w.document.close();
-    }
-    window.delInvoice = (id)=>{ if(confirm('Delete invoice?')){ state.invoices = state.invoices.filter(i=>i.id!==id); render(); } };
-
-    // ---- ATTENDANCE ----
-    function renderAttendance(){
-      const date = today();
-      const dayRec = state.attendance[date]||{};
-      const rows = [...state.team, ...state.freelancers].map(m=>{
-        const rec = dayRec[m.id]||{};
-        return `
-          <div class="card p-4">
-            <div class="font-medium mb-2">${m.name} <span class="text-xs text-slate-500">(${m.kind||'member'})</span></div>
-            <div class="grid grid-cols-2 gap-2">
-              <label class='block'><div class='label'>Check-in</div><input type='time' class='input' value='${rec.in||''}' onchange='attSet("${date}","${m.id}","in",this.value)' /></label>
-              <label class='block'><div class='label'>Check-out</div><input type='time' class='input' value='${rec.out||''}' onchange='attSet("${date}","${m.id}","out",this.value)' /></label>
-            </div>
-            <div class="text-sm text-slate-600 mt-2">Hours: <b>${calcHours(rec.in, rec.out).toFixed(2)}</b></div>
-          </div>`
-      }).join('');
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3"><div class="text-sm text-slate-600">${date}</div></div>
-        <div class="grid-auto">${rows}</div>
-      `;
-    }
-    window.attSet = (date, id, key, val)=>{ state.attendance[date] = state.attendance[date]||{}; state.attendance[date][id] = state.attendance[date][id]||{}; state.attendance[date][id][key]=val; save(); };
-    function calcHours(inT,outT){ if(!inT||!outT) return 0; const [ih,im]=inT.split(':').map(Number); const [oh,om]=outT.split(':').map(Number); const ms=(oh*60+om - (ih*60+im))*60*1000; return Math.max(0, ms)/(1000*60*60); }
-
-    // ---- LEAVES ----
-    function renderLeaves(){
-      const rows = state.leaves.map(l=>{
-        const m = l.kind==='employee'? byId(state.team,l.memberId) : byId(state.freelancers,l.memberId);
-        return `<tr class='border-t'><td class='p-3'>${m?.name||'-'} <span class='text-xs text-slate-500'>(${l.kind})</span></td><td class='p-3'>${l.type}</td><td class='p-3'>${l.from} → ${l.to}</td><td class='p-3'>${l.reason}</td><td class='p-3'>${l.status}</td><td class='p-3'><button class='btn-ghost' onclick='editLeave("${l.id}")'>Edit</button> <button class='btn bg-rose-600 hover:bg-rose-700' onclick='delLeave("${l.id}")'>Delete</button></td></tr>`;
-      }).join('');
-      main.innerHTML = `
-        <div class="flex items-center justify-between mb-3">
-          <div class="text-sm text-slate-600">Total: ${state.leaves.length}</div>
-          <button class="btn" onclick="editLeave()"><i class="fa-solid fa-plus"></i> New Leave</button>
-        </div>
-        <div class='overflow-x-auto card'>
-          <table class='min-w-full text-left'>
-            <thead class='bg-slate-50'><tr><th class='p-3'>Member</th><th class='p-3'>Type</th><th class='p-3'>Range</th><th class='p-3'>Reason</th><th class='p-3'>Status</th><th class='p-3'>Actions</th></tr></thead>
-            <tbody>${rows}</tbody>
-          </table>
-        </div>`;
-    }
-    window.editLeave = (id)=>{
-      const l = id ? byId(state.leaves,id) : {id:uid(), memberId:(state.team[0]?.id||''), kind:'employee', from:today(), to:today(), type:'Annual', reason:'', status:'Pending'};
-      const memberOpts = [
-        ...state.team.map(m=>`<option value='employee:${m.id}'>${m.name} (employee)</option>`),
-        ...state.freelancers.map(f=>`<option value='freelancer:${f.id}'>${f.name} (freelancer)</option>`)
-      ].join('');
-      openForm('Leave', `
-        <label class='block mb-3'><div class='label'>Member</div><select name='mem' class='select'>${memberOpts}</select></label>
-        ${select('Type','type',['Annual','Sick','Casual'], l.type)}
-        ${input('From','from',l.from,'date')}
-        ${input('To','to',l.to,'date')}
-        ${textarea('Reason','reason',l.reason)}
-        ${select('Status','status',['Pending','Approved','Rejected'], l.status)}
-      `, (vals)=>{
-        const [kind,memberId] = vals.mem.split(':');
-        const rec = {...l, ...vals, kind, memberId};
-        const exist = state.leaves.some(x=>x.id===rec.id);
-        state.leaves = exist ? state.leaves.map(x=>x.id===rec.id?rec:x) : [rec, ...state.leaves];
-        render();
-      });
-    }
-    window.delLeave = (id)=>{ if(confirm('Delete leave?')){ state.leaves = state.leaves.filter(x=>x.id!==id); render(); } };
-
-    // ---- MESSAGING ----
-    function renderMessaging(){
-      const recipients = [
-        ...state.team.map(m=>({id:m.id, name:m.name, kind:'employee', phone:m.phone, email:m.email})),
-        ...state.freelancers.map(f=>({id:f.id, name:f.name, kind:'freelancer', phone:f.phone, email:f.email})),
-        ...state.clients.map(c=>({id:c.id, name:c.name, kind:'client', phone:c.phone, email:c.contact}))
-      ];
-      const list = recipients.map(r=>`<label class='flex items-center gap-2 p-2 border rounded-xl'><input type='checkbox' value='${r.kind}:${r.id}' /> <div><div class='font-medium'>${r.name}</div><div class='text-xs text-slate-600'>${r.kind} • ${r.email||''}</div></div></label>`).join('');
-      main.innerHTML = `
-        <div class='grid grid-cols-1 lg:grid-cols-3 gap-4'>
-          <div class='lg:col-span-2 card p-4'>
-            ${input('Subject','msg_subject','')}
-            ${textarea('Details / Body','msg_body','')}
-            <div class='flex gap-2 mt-3'>
-              <button class='btn' onclick='sendWA()'><i class="fa-brands fa-whatsapp"></i> Send WhatsApp</button>
-              <button class='btn bg-sky-700 hover:bg-sky-800' onclick='sendMail()'><i class="fa-regular fa-envelope"></i> Send Email</button>
-            </div>
-          </div>
-          <div class='card p-4'>
-            <div class='font-semibold mb-2'>Select Recipients</div>
-            <div class='space-y-2 max-h-[60vh] overflow-auto' id='recips'>${list}</div>
-          </div>
-        </div>`;
-    }
-    window.sendWA = ()=>{
-      const boxes = qsa('#recips input[type=checkbox]:checked');
-      const subject = qs('[name=msg_subject]').value; const details = qs('[name=msg_body]').value;
-      boxes.forEach((b,i)=>{ const [kind,id] = b.value.split(':'); const r = (kind==='employee'? byId(state.team,id) : kind==='freelancer'? byId(state.freelancers,id) : byId(state.clients,id));
-        const text = fill(state.company.waTemplate,{name:r?.name||'Friend',subject,due:today(),details,company:state.company.name});
-        const url = waLink(r?.phone||'', text); setTimeout(()=>window.open(url,'_blank'), i*400);
-      });
-    }
-    window.sendMail = ()=>{
-      const box = qsa('#recips input[type=checkbox]:checked')[0]; if(!box) return alert('Select at least one');
-      const [kind,id] = box.value.split(':'); const r = (kind==='employee'? byId(state.team,id) : kind==='freelancer'? byId(state.freelancers,id) : byId(state.clients,id));
-      const subject = fill(state.company.mailSubject,{company:state.company.name,subject:qs('[name=msg_subject]').value});
-      const body = fill(state.company.mailBody,{company:state.company.name, name:r?.name||'Team', details: qs('[name=msg_body]').value});
-      location.href = mailto(r?.email||'', subject, body);
-    }
-
-    // ---- REPORTS ----
-    function renderReports(){
-      const rowsTasks = state.tasks.map(t=>{
-        const mem = t.assigneeId? (t.assigneeKind==='employee'? byId(state.team,t.assigneeId) : byId(state.freelancers,t.assigneeId)) : null;
-        return [t.title, mem?.name||'-', t.priority, t.status, t.due].join(',');
-      });
-      const rowsTeam = state.team.map(m=> [m.name,m.role,m.email,m.phone,m.salary,m.status].join(','));
-      const rowsFree = state.freelancers.map(f=> [f.name,f.specialty,f.email,f.phone,f.rateType+':'+f.rate,f.hoursMonth,f.status].join(','));
-      main.innerHTML = `
-        <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
-          ${KPI('Employees', state.team.length)}
-          ${KPI('Freelancers', state.freelancers.length)}
-          ${KPI('Clients', state.clients.length)}
-          ${KPI('Projects', state.projects.length)}
-          ${KPI('Open Tasks', state.tasks.filter(t=>t.status!=='Done').length)}
-          ${KPI('Completed', state.tasks.filter(t=>t.status==='Done').length)}
-          <div class='lg:col-span-3 card p-4'>
-            <div class='flex flex-wrap gap-2'>
-              <button class='btn' onclick='exportCSV("tasks.csv", "Title,Assignee,Priority,Status,Due\n${rowsTasks.join('\\n')}")'>Export Tasks CSV</button>
-              <button class='btn-ghost' onclick='exportCSV("employees.csv", "Name,Role,Email,Phone,Salary,Status\n${rowsTeam.join('\\n')}")'>Export Employees CSV</button>
-              <button class='btn-ghost' onclick='exportCSV("freelancers.csv", "Name,Specialty,Email,Phone,Rate,Hours,Status\n${rowsFree.join('\\n')}")'>Export Freelancers CSV</button>
-            </div>
-          </div>
-        </div>`;
-    }
-    window.exportCSV = (name, data)=> dl(name, data, 'text/csv');
-
-    // ---- SETTINGS ----
-    function renderSettings(){
-      const c = state.company;
-      main.innerHTML = `
-        <div class='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div class='card p-4'>
-            <div class='font-semibold mb-3'>Company Info</div>
-            ${input('Name','c_name',c.name)}
-            ${input('Email','c_email',c.email,'email')}
-            ${input('Phone','c_phone',c.phone)}
-            ${input('Address','c_address',c.address)}
-            ${input('Currency (e.g., PKR, USD)','c_currency',c.currency)}
-            <div class='flex justify-end mt-3'><button class='btn' onclick='saveCompany()'>Save</button></div>
-          </div>
-          <div class='card p-4'>
-            <div class='font-semibold mb-3'>Message Templates</div>
-            ${textarea('WhatsApp Template','c_wa',c.waTemplate)}
-            ${input('Email Subject Template','c_msub',c.mailSubject)}
-            ${textarea('Email Body Template','c_mbody',c.mailBody)}
-            <div class='text-xs text-slate-600 mt-2'>Variables: {name}, {subject}, {due}, {details}, {company}</div>
-            <div class='flex justify-end mt-3'><button class='btn' onclick='saveCompany()'>Save</button></div>
-          </div>
-        </div>`;
-    }
-    window.saveCompany = ()=>{
-      state.company.name = qs('[name=c_name]').value;
-      state.company.email = qs('[name=c_email]').value;
-      state.company.phone = qs('[name=c_phone]').value;
-      state.company.address = qs('[name=c_address]').value;
-      state.company.currency = qs('[name=c_currency]').value||'PKR';
-      state.company.waTemplate = qs('[name=c_wa]').value;
-      state.company.mailSubject = qs('[name=c_msub]').value;
-      state.company.mailBody = qs('[name=c_mbody]').value;
-      qs('#brandName').textContent = state.company.name;
-      qs('#brandNameFooter').textContent = state.company.name;
-      qs('#brandMeta').textContent = `${state.company.email} • ${state.company.phone}`;
-      save(); alert('Saved');
-    }
-
-    // ---- IMPORT / EXPORT ----
-    function renderImportExport(){
-      main.innerHTML = `
-        <div class='grid grid-cols-1 lg:grid-cols-2 gap-4'>
-          <div class='card p-4'>
-            <div class='font-semibold mb-2'>Export Data</div>
-            <p class='text-sm text-slate-600'>Download all your data as JSON for backup or migration.</p>
-            <div class='mt-3'><button class='btn' onclick='exportJSON()'><i class="fa-regular fa-file"></i> Download JSON</button></div>
-          </div>
-          <div class='card p-4'>
-            <div class='font-semibold mb-2'>Import Data</div>
-            <p class='text-sm text-slate-600'>Paste JSON exported from this app. Import replaces current data.</p>
-            <textarea id='importBox' class='textarea h-40' placeholder='{...}'></textarea>
-            <div class='mt-3 flex gap-2'>
-              <button class='btn' onclick='importJSON()'><i class="fa-solid fa-file-arrow-up"></i> Import</button>
-              <button class='btn bg-rose-600 hover:bg-rose-700' onclick='(${reset.toString()})();'><i class="fa-solid fa-rotate"></i> Reset</button>
-            </div>
-          </div>
-        </div>`;
-    }
-    window.exportJSON = ()=> dl('scm_data.json', JSON.stringify(state,null,2), 'application/json');
-    window.importJSON = ()=>{ try{ const obj = JSON.parse(qs('#importBox').value); state = obj; save(); location.reload(); }catch(e){ alert('Invalid JSON'); } };
-
-    // --- Generic modal form ---
-    function openForm(title, inner, onSubmit){
-      const wrap = document.createElement('div');
-      wrap.className = 'fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4';
-      wrap.innerHTML = `
-        <div class='bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-auto'>
-          <div class='flex items-center justify-between p-4 border-b'>
-            <div class='text-lg font-semibold'>${title}</div>
-            <button class='btn-ghost' onclick='this.closest(".fixed").remove()'>✕</button>
-          </div>
-          <form class='p-4 space-y-3'>
-            ${inner}
-            <div class='flex justify-end gap-2'>
-              <button type='button' class='btn-ghost' onclick='this.closest(".fixed").remove()'>Cancel</button>
-              <button class='btn' type='submit'>Save</button>
-            </div>
-          </form>
-        </div>`;
-      document.body.appendChild(wrap);
-      wrap.querySelector('form').addEventListener('submit', (e)=>{
-        e.preventDefault();
-        const fd = new FormData(e.target); const vals = fromEntries(fd.entries()); onSubmit(vals); wrap.remove();.fromEntries(fd.entries());
-        onSubmit(vals); wrap.remove();
-      });
-    }
-
-    function input(label, name, value='', type='text'){ return `<label class='block'><div class='label'>${label}</div><input name='${name}' value='${value??''}' type='${type}' class='input'></label>`; }
-    function textarea(label, name, value=''){ return `<label class='block'><div class='label'>${label}</div><textarea name='${name}' class='textarea' rows='5'>${value??''}</textarea></label>`; }
-    function select(label, name, options, value){ return `<label class='block'><div class='label'>${label}</div><select name='${name}' class='select'>${options.map(o=>`<option ${o==value?'selected':''}>${o}</option>`).join('')}</select></label>`; }
-
-    // Initial render
-    render();
-
-    // Support hash navigation (optional)
-    window.addEventListener('hashchange', ()=>{
-      const key = location.hash.replace('#','');
-      if(NAV.some(n=>n.key===key)){ current = key; render(); }
+      </div>
+    `).join('');
+    el('#main').innerHTML = `<div class="flex items-center justify-between mb-3"><h3 class="text-lg font-semibold">Team</h3><div><button class="btn" onclick="addTeam()">+ Add Member</button></div></div>${rows||'<div class=\"card p-4 small\">No team members yet.</div>'}`;
+  }
+  window.addTeam = window.addTeam || function(){ addTeam(); }
+  function addTeam(){
+    openForm('Add Team Member', `
+      <label class="block small">Name<input name="name" class="input" required></label>
+      <label class="block small">Role<input name="role" class="input"></label>
+      <label class="block small">Email<input name="email" class="input" type="email"></label>
+      <label class="block small">Phone<input name="phone" class="input"></label>
+      <label class="block small">Salary<input name="salary" class="input" type="number"></label>
+      <label class="block small">Status<select name="status" class="select"><option>Active</option><option>Inactive</option></select></label>
+    `, async (vals)=>{
+      await saveDoc('team', null, {...vals, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      alert('Saved'); render();
     });
-  // --- Form field helpers ---
-    function input(label,name,value,type='text'){ return `<label class='block mb-3'><div class='label'>${label}</div><input class='input' name='${name}' type='${type}' value='${value??''}'/></label>` }
-    function textarea(label,name,value){ return `<label class='block mb-3'><div class='label'>${label}</div><textarea class='textarea' name='${name}'>${value??''}</textarea></label>` }
-    function select(label,name,options,selected){ return `<label class='block mb-3'><div class='label'>${label}</div><select class='select' name='${name}'>${options.map(o=>`<option ${o===selected?'selected':''}>${o}</option>`).join('')}</select></label>` }
+  }
+  window.editTeam = async (id)=>{
+    const rec = await getDoc('team', id);
+    openForm('Edit Team', `
+      <input type="hidden" name="id" value="${rec.id}">
+      <label class="block small">Name<input name="name" class="input" value="${rec.name||''}" required></label>
+      <label class="block small">Role<input name="role" class="input" value="${rec.role||''}"></label>
+      <label class="block small">Email<input name="email" class="input" type="email" value="${rec.email||''}"></label>
+      <label class="block small">Phone<input name="phone" class="input" value="${rec.phone||''}"></label>
+      <label class="block small">Salary<input name="salary" class="input" type="number" value="${rec.salary||0}"></label>
+      <label class="block small">Status<select name="status" class="select"><option ${rec.status==='Active'?'selected':''}>Active</option><option ${rec.status==='Inactive'?'selected':''}>Inactive</option></select></label>
+    `, async (vals)=>{
+      await saveDoc('team', id, {...vals, salary: Number(vals.salary||0)});
+      alert('Updated'); render();
+    });
+  }
 
-    // --- Simple hash routing (optional) ---
-    window.addEventListener('hashchange', ()=>{ const k = location.hash.replace('#',''); if(NAV.some(n=>n.key===k)){ current = k; render(); } });
-    if(location.hash){ const k = location.hash.replace('#',''); if(NAV.some(n=>n.key===k)) current=k; }
-
-    // Initial render
-    render();
-
-  })();
-  <\/script>
-</body>
-</html>
+  // 3) Freelancers (similar to team)
+  async function renderFreelancers(){
+    const list = await fetchCollection('freelancers');
+    const rows = list.map(f=>`
+      <div class="p-3 card mb-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="font-semibold">${f.name||'(no name)'}</div>
+            <div class="small">${f.specialty||''} • ${f.email||''}</div>
+          </div>
+          <div class="flex gap-2 items-center">
+            <a target="_blank" href="https://wa.me/${(f.phone||'').replace(/\+/g,'')}" class="btn-ghost"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="mailto:${f.email||''}" class="btn-ghost"><i class="fa-regular fa-envelope"></i></a>
+            <button class="btn-ghost" onclick="editFreelancer('${f.id}')">Edit</button>
+            <button class="btn" style="background:#dc2626" onclick="deleteDocConfirm('freelancers','${f.id}')">Delete</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+    el('#main').innerHTML = `<div class="flex items-center justify-between mb-3"><h3 class="text-lg font-semibold">Freelancers</h3><div><button class="btn" onclick="addFreelancer()">+ Add Freelancer</button></div></div>${rows||'<div class=\"card p-4 small\">No freelancers yet.</div>'}`;
+  }
+  function addFreelancer(){
+    openForm('Add Freelancer', `
+      <label class="block small">Name<input name="name" class="input" required></label>
+      <label class="block small">Specialty<input name="specialty" class="input"></label>
+      <label class="block small">Email<input name="email" class="input" type="email"></label>
+      <label class="block small">Phone<input name="phone" class="input"></label>
+      <label class="block small">Rate<input name="rate" class="input" type="number"></label>
+      <label class="block small">Rate Type<select name="rateType" class="select"><option>hourly</option><option>fixed</option></select></label>
+    `, async (vals)=>{
+      await saveDoc('freelancers', null, {...vals, hoursMonth:0, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+      alert('Saved'); render();
+    });
+  }
+  async function editFreelancer(id){
+    const rec = await getDoc('freelancers', id);
+    openForm('Edit Freelancer', `
+      <label class="block small">Name<input name="name" class="input" value="${rec.name||''}" required></label>
+      <label class="block small">Specialty<input name="specialty" class="input" value="${rec.specialty||''}"></label>
+      <label class="block small">Email<input name="email" class="input" type="email" value="${rec.email||''}"></label>
+      <label class="block small">Phone<input name="phone" class="input" value="${rec.phone||''}"></label>
+      <label class="block small">Rate<input name="rate" class="input" type="number" value="${rec.rate||0}"></label>
+      <label class="block small">Rate Type<select name="rateType" class="select"><option ${rec.rateType==='hourly'?'selected':''}>hourly</option><option ${rec.rateType==='fixed'?'selected':''}>fixed</option></select></label>
+    `, async (vals)=>{
+      await saveDoc('freelancers', id, {...vals, rate:Number(vals.rate||0
